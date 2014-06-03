@@ -8,5 +8,12 @@
     <artifactId>ipdip</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <dependencies>
+        <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-core</artifactId>
+            <version>0.7.0</version>
+        </dependency>
+    </dependencies>
 
 </project>
