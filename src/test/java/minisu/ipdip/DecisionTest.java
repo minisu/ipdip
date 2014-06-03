@@ -9,7 +9,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 public class DecisionTest
 {
 	@Test
-	public void ad() throws Exception
+	public void shouldDeserialize() throws Exception
 	{
 		ObjectMapper mapper = new ObjectMapper();
 		Decision decision = mapper.readValue( fixture( "decision.json" ), Decision.class);

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Decision
@@ -28,5 +29,22 @@ public class Decision
 	public String getId()
 	{
 		return id;
+	}
+
+	@Override
+	public boolean equals( Object other )
+	{
+		if( other instanceof Decision )
+		{
+			Decision otherDecision = ( Decision )other;
+			return id == otherDecision.id;
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return Objects.hash( id );
 	}
 }
