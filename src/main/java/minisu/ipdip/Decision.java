@@ -5,17 +5,24 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
+import java.util.UUID;
 
 public class Decision
 {
 	@JsonProperty
-	String id = "abc";
+	private final String id;
 
 	@JsonProperty
-	String name = "My decision";
+	private final String name = "My decision";
 
 	@JsonProperty
-	List<String> alternatives = ImmutableList.of("Alt1", "Alt2");
+	private final List<String> alternatives = ImmutableList.of("Alt1", "Alt2");
+
+	@JsonCreator
+	public Decision()
+	{
+		this.id = UUID.randomUUID().toString();
+	}
 
 	public String getId()
 	{

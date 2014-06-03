@@ -3,12 +3,16 @@ package minisu.ipdip;
 import com.google.common.base.Optional;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
 
+
+import java.net.URI;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Path( "decisions/" )
 @Produces( APPLICATION_JSON )
+@Consumes( APPLICATION_JSON )
 public class RandomResource
 {
 	private final DecisionStorage storage;
@@ -20,14 +24,15 @@ public class RandomResource
 
 	@GET
 	@Path( "{id}" )
-	public Optional<Decision> abc( @PathParam( "id" )String id )
+	public Optional<Decision> getDecision( @PathParam( "id" )String id )
 	{
 		return storage.get( id );
 	}
 
 	@POST
-	public String abc2( Decision decision )
+	public Response createDecision( Decision decision )
 	{
-		throw new UnsupportedOperationException(  );
+		storage.store( decision );
+		return Response.created( URI.create( decision.getId() ) ).entity( decision ).build();
 	}
 }
