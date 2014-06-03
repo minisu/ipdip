@@ -38,6 +38,11 @@ public class Decision
 		this.decider = Suppliers.memoize( () -> picker.pick( alternatives ) );
 	}
 
+	public String decide()
+	{
+		return decider.get();
+	}
+
 	public String getId()
 	{
 		return id;
@@ -49,7 +54,7 @@ public class Decision
 		if( other instanceof Decision )
 		{
 			Decision otherDecision = ( Decision )other;
-			return id == otherDecision.id;
+			return id.equals( otherDecision.id );
 		}
 		return false;
 	}
@@ -58,10 +63,5 @@ public class Decision
 	public int hashCode()
 	{
 		return Objects.hash( id );
-	}
-
-	public String decide()
-	{
-		return decider.get();
 	}
 }
