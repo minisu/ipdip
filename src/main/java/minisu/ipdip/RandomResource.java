@@ -35,4 +35,13 @@ public class RandomResource
 		storage.store( decision );
 		return Response.created( URI.create( decision.getId() ) ).entity( decision ).build();
 	}
+
+	@PUT
+	@Path( "{id}/decide" )
+	public Response decide( @PathParam( "id" )String id )
+	{
+		Decision decision = storage.get( id ).get();
+		decision.decide();
+		return Response.created( URI.create( decision.getId() ) ).entity( decision ).build();
+	}
 }

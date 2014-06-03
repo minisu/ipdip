@@ -16,4 +16,11 @@ public class DecisionTest
 
 		assertThat( decision.getId() ).isNotEmpty();
 	}
+
+	@Test
+	public void decisionsShouldBeFinal() throws Exception
+	{
+		Decision decision = DummyDecision.create();
+		assertThat( decision.decide() == decision.decide() );
+	}
 }
