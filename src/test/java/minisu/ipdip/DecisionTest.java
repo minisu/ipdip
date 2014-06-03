@@ -21,6 +21,6 @@ public class DecisionTest
 	public void decisionsShouldBeFinal() throws Exception
 	{
 		Decision decision = DummyDecision.create();
-		assertThat( decision.decide() == decision.decide() );
+		assertThat( decision.decide() ).isEqualTo( decision.decide() );
 	}
 }

@@ -3,6 +3,7 @@ package minisu.ipdip;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import minisu.ipdip.random.ElementPicker;
 import minisu.ipdip.random.RandomElementPicker;
 
@@ -34,7 +35,7 @@ public class Decision
 		this.id = UUID.randomUUID().toString();
 		this.name = name;
 		this.alternatives = alternatives;
-		this.decider = () -> picker.pick( alternatives );
+		this.decider = Suppliers.memoize( () -> picker.pick( alternatives ) );
 	}
 
 	public String getId()
