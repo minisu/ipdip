@@ -2,7 +2,6 @@ package minisu.ipdip;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,15 +12,17 @@ public class Decision
 	private final String id;
 
 	@JsonProperty
-	private final String name = "My decision";
+	private final String name;
 
 	@JsonProperty
-	private final List<String> alternatives = ImmutableList.of("Alt1", "Alt2");
+	private final List<String> alternatives;
 
 	@JsonCreator
-	public Decision()
+	public Decision(@JsonProperty("name") String name, @JsonProperty("alternatives") List<String> alternatives)
 	{
 		this.id = UUID.randomUUID().toString();
+		this.name = name;
+		this.alternatives = alternatives;
 	}
 
 	public String getId()
