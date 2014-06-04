@@ -1,6 +1,7 @@
-package minisu.ipdip;
+package minisu.ipdip.storage;
 
 import com.google.common.base.Optional;
+import minisu.ipdip.model.Decision;
 
 import java.util.concurrent.ConcurrentHashMap;
 

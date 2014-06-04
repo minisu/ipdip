@@ -1,7 +1,8 @@
 package minisu.ipdip;
 
 import com.google.common.collect.ImmutableList;
-import minisu.ipdip.random.CyclingElementPicker;
+import minisu.ipdip.elementpicker.CyclingElementPicker;
+import minisu.ipdip.model.Decision;
 
 public class DummyDecision
 {

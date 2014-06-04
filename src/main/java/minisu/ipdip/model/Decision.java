@@ -1,11 +1,12 @@
-package minisu.ipdip;
+package minisu.ipdip.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import minisu.ipdip.random.ElementPicker;
-import minisu.ipdip.random.RandomElementPicker;
+import minisu.ipdip.elementpicker.ElementPicker;
+import minisu.ipdip.elementpicker.RandomElementPicker;
 
 import java.util.List;
 import java.util.Objects;
@@ -24,13 +25,16 @@ public class Decision
 
 	private final Supplier<String> decider;
 
+	@JsonProperty
+	private volatile Optional<String> decidedAlternative = Optional.absent();
+
 	@JsonCreator
 	public Decision(@JsonProperty("name") String name, @JsonProperty("alternatives") List<String> alternatives)
 	{
 		this( name, alternatives, new RandomElementPicker() );
 	}
 
-	Decision(String name, List<String> alternatives, ElementPicker picker)
+	public Decision( String name, List<String> alternatives, ElementPicker picker )
 	{
 		this.id = UUID.randomUUID().toString();
 		this.name = name;
@@ -40,7 +44,9 @@ public class Decision
 
 	public String decide()
 	{
-		return decider.get();
+		String decision = decider.get();
+		decidedAlternative = Optional.of( decision );
+		return decision;
 	}
 
 	public String getId()

@@ -1,5 +1,7 @@
 package minisu.ipdip;
 
+import minisu.ipdip.model.Decision;
+import minisu.ipdip.storage.InMemoryStorage;
 import org.junit.Test;
 
 import javax.ws.rs.core.Response;
@@ -19,7 +21,7 @@ public class RandomResourceTest
 		Response response = resource.createDecision( inputDecision );
 		URI decisionLocation = ( URI )response.getMetadata().getFirst( "Location" );
 
-		Decision outputDecision = resource.getDecision( decisionLocation.toString() ).get();
+		Decision outputDecision = resource.getDecision( decisionLocation.toString() ).get().getDecision();
 
 		assertThat( outputDecision ).isEqualTo( inputDecision );
 	}

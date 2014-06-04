@@ -1,4 +1,4 @@
-package minisu.ipdip.random;
+package minisu.ipdip.elementpicker;
 
 import java.util.List;
 

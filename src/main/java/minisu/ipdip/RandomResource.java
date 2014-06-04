@@ -1,6 +1,10 @@
 package minisu.ipdip;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
+import minisu.ipdip.model.Decision;
+import minisu.ipdip.storage.DecisionStorage;
+import minisu.ipdip.views.DecisionView;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -24,9 +28,9 @@ public class RandomResource
 
 	@GET
 	@Path( "{id}" )
-	public Optional<Decision> getDecision( @PathParam( "id" )String id )
+	public Optional<DecisionView> getDecision( @PathParam( "id" )String id )
 	{
-		return storage.get( id );
+		return Optional.of( new Decision( "Should we party?", ImmutableList.of( "Yes", "No" ) ) ).transform( DecisionView::new );
 	}
 
 	@POST
