@@ -6,16 +6,20 @@ import minisu.ipdip.model.Decision;
 import minisu.ipdip.storage.DecisionStorage;
 import minisu.ipdip.views.DecisionView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 
 import java.net.URI;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.TEXT_HTML;
 
 @Path( "decisions/" )
-@Produces( APPLICATION_JSON )
+@Produces( TEXT_HTML)
 @Consumes( APPLICATION_JSON )
 public class RandomResource
 {
@@ -27,10 +31,23 @@ public class RandomResource
 	}
 
 	@GET
-	@Path( "{id}" )
-	public Optional<DecisionView> getDecision( @PathParam( "id" )String id )
+	@Path( "dummy" )
+	public Optional<DecisionView> getDummyDecision( @Context HttpServletRequest request, @PathParam( "id" )String id )
 	{
-		return Optional.of( new Decision( "Should we party?", ImmutableList.of( "Yes", "No" ) ) ).transform( DecisionView::new );
+		String userId = request.getRemoteHost() + " " + request.getHeader( "User-Agent" );
+		return Optional.of( new Decision( "Should we party?", ImmutableList.of( "Yes", "No" ) ) )
+				.transform( d -> d.wasSeenBy( userId ) )
+				.transform( DecisionView::new );
+	}
+
+	@GET
+	@Path( "{id}" )
+	public Optional<DecisionView> getDecision( @Context HttpServletRequest request, @PathParam( "id" )String id )
+	{
+		String userId = request.getRemoteHost() + " " + request.getHeader( "User-Agent" );
+		return storage.get( id )
+				.transform( d -> d.wasSeenBy( userId ) )
+				.transform( DecisionView::new );
 	}
 
 	@POST

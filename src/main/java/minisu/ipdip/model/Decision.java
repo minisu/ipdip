@@ -2,14 +2,15 @@ package minisu.ipdip.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import minisu.ipdip.elementpicker.ElementPicker;
 import minisu.ipdip.elementpicker.RandomElementPicker;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 public class Decision
@@ -22,6 +23,9 @@ public class Decision
 
 	@JsonProperty
 	private final List<String> alternatives;
+
+	@JsonProperty
+	private final List<String> seenBy;
 
 	private final Supplier<String> decider;
 
@@ -39,6 +43,7 @@ public class Decision
 		this.id = UUID.randomUUID().toString();
 		this.name = name;
 		this.alternatives = alternatives;
+		this.seenBy = new ArrayList<>();
 		this.decider = Suppliers.memoize( () -> picker.pick( alternatives ) );
 	}
 
@@ -49,9 +54,38 @@ public class Decision
 		return decision;
 	}
 
+	public Decision wasSeenBy( String user )
+	{
+		if( !decidedAlternative.isPresent() )
+		{
+			seenBy.add( user );
+		}
+		return this;
+	}
+
 	public String getId()
 	{
 		return id;
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
+	public List<String> getAlternatives()
+	{
+		return alternatives;
+	}
+
+	public List<String> getSeenBy()
+	{
+		return seenBy;
+	}
+
+	public Optional<String> getDecidedAlternative()
+	{
+		return decidedAlternative;
 	}
 
 	@Override
@@ -68,6 +102,15 @@ public class Decision
 	@Override
 	public int hashCode()
 	{
-		return Objects.hash( id );
+		return Objects.hashCode( id );
+	}
+
+	@Override
+	public String toString()
+	{
+		return Objects.toStringHelper( this )
+				.add( "id", id )
+				.add( "name", name )
+				.toString();
 	}
 }

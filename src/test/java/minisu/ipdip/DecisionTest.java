@@ -13,7 +13,7 @@ public class DecisionTest
 	private static final ObjectMapper MAPPER = Jackson.newObjectMapper();
 
 	@Test
-	public void shouldSerialize() throws Exception
+	public void shouldDeserialize() throws Exception
 	{
 		Decision decision = MAPPER.readValue( fixture( "decision.json" ), Decision.class);
 
