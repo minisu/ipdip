@@ -2,5 +2,5 @@ package minisu.ipdip.websockets;
 
 public interface Broadcaster
 {
-	public void broadcast( String topic );
+	public void broadcast( String topic, String message );
 }

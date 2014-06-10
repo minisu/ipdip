@@ -46,7 +46,7 @@ public class RandomResource
 	public Optional<DecisionView> getDecision( @Context HttpServletRequest request, @PathParam( "id" )String id )
 	{
 		String userId = request.getRemoteHost() + " " + request.getHeader( "User-Agent" );
-		broadcaster.broadcast( id );
+		broadcaster.broadcast( id, userId );
 		return storage.get( id )
 				.transform( d -> d.wasSeenBy( userId ) )
 				.transform( DecisionView::new );

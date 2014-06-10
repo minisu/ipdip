@@ -17,9 +17,9 @@ public class BroadcastingCentral implements SubscriptionService, Broadcaster
 		sessions.remove( topic, socket );
 	}
 
-	public void broadcast( String topic )
+	public void broadcast( String topic, String message )
 	{
 		sessions.get( topic )
-				.forEach( socket -> socket.send( "New viewer!" ) );
+				.forEach( socket -> socket.send( message ) );
 	}
 }
