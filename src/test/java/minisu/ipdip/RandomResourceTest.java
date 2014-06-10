@@ -2,6 +2,7 @@ package minisu.ipdip;
 
 import minisu.ipdip.model.Decision;
 import minisu.ipdip.storage.InMemoryStorage;
+import minisu.ipdip.websockets.BroadcastingCentral;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,7 +24,7 @@ public class RandomResourceTest
 	@Before
 	public void setup()
 	{
-		resource = new RandomResource( new InMemoryStorage() );
+		resource = new RandomResource( new InMemoryStorage(), mock( BroadcastingCentral.class ) );
 		inputDecision = DummyDecision.create();
 	}
 

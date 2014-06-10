@@ -5,14 +5,13 @@ import com.google.common.collect.ImmutableList;
 import minisu.ipdip.model.Decision;
 import minisu.ipdip.storage.DecisionStorage;
 import minisu.ipdip.views.DecisionView;
+import minisu.ipdip.websockets.Broadcaster;
+import minisu.ipdip.websockets.BroadcastingCentral;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-
 import java.net.URI;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -24,10 +23,12 @@ import static javax.ws.rs.core.MediaType.TEXT_HTML;
 public class RandomResource
 {
 	private final DecisionStorage storage;
+	private final Broadcaster broadcaster;
 
-	public RandomResource( DecisionStorage storage )
+	public RandomResource( DecisionStorage storage, Broadcaster broadcaster )
 	{
 		this.storage = storage;
+		this.broadcaster = broadcaster;
 	}
 
 	@GET
@@ -45,6 +46,7 @@ public class RandomResource
 	public Optional<DecisionView> getDecision( @Context HttpServletRequest request, @PathParam( "id" )String id )
 	{
 		String userId = request.getRemoteHost() + " " + request.getHeader( "User-Agent" );
+		broadcaster.broadcast( id );
 		return storage.get( id )
 				.transform( d -> d.wasSeenBy( userId ) )
 				.transform( DecisionView::new );
