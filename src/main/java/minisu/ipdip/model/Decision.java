@@ -9,9 +9,7 @@ import com.google.common.base.Suppliers;
 import minisu.ipdip.elementpicker.ElementPicker;
 import minisu.ipdip.elementpicker.RandomElementPicker;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -27,7 +25,7 @@ public class Decision
 	private final List<String> alternatives;
 
 	@JsonProperty
-	private final List<String> seenBy;
+	private final Set<String> seenBy;
 
 	private final Supplier<String> decider;
 
@@ -45,7 +43,7 @@ public class Decision
 		this.id = UUID.randomUUID().toString();
 		this.name = checkNotNull( name );
 		this.alternatives = checkNotNull( alternatives );
-		this.seenBy = new ArrayList<>();
+		this.seenBy = new LinkedHashSet<>();
 		this.decider = Suppliers.memoize( () -> picker.pick( alternatives ) );
 	}
 
@@ -80,7 +78,7 @@ public class Decision
 		return alternatives;
 	}
 
-	public List<String> getSeenBy()
+	public Set<String> getSeenBy()
 	{
 		return seenBy;
 	}

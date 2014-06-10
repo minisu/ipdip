@@ -24,9 +24,7 @@ public class PublishingSocket
 	{
 		this.session = session;
 		this.topic = message;
-
 		subscriptionService.subscribe( this, message );
-		session.getRemote().sendString( "Client " + session.getRemoteAddress() + " subscribed to id " + message );
 	}
 
 	@OnWebSocketClose
