@@ -2,17 +2,20 @@ package minisu.ipdip;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import io.dropwizard.views.View;
 import minisu.ipdip.model.Decision;
 import minisu.ipdip.storage.DecisionStorage;
 import minisu.ipdip.views.DecisionView;
 import minisu.ipdip.websockets.Broadcaster;
-import minisu.ipdip.websockets.BroadcastingCentral;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.net.URI;
+import java.util.List;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.TEXT_HTML;
@@ -42,6 +45,12 @@ public class RandomResource
 	}
 
 	@GET
+	public View index()
+	{
+		return new View("index.ftl") {};
+	}
+
+	@GET
 	@Path( "{id}" )
 	public Optional<DecisionView> getDecision( @Context HttpServletRequest request, @PathParam( "id" )String id )
 	{
@@ -59,12 +68,29 @@ public class RandomResource
 		return Response.created( URI.create( decision.getId() ) ).entity( decision ).build();
 	}
 
+	@POST
+	@Consumes( MediaType.APPLICATION_FORM_URLENCODED )
+	public Response createDecisionFromForm( MultivaluedMap<String, String> formParams )
+	{
+		String name = formParams.getFirst( "name" );
+		List<String> alternatives = formParams.get( "alternative" );
+
+		Decision decision = new Decision( name, alternatives );
+		storage.store( decision );
+		return Response
+				.seeOther( URI.create( "decisions/" + decision.getId() ) )
+				.entity( new DecisionView( decision ) )
+				.build();
+	}
+
 	@PUT
 	@Path( "{id}/decide" )
 	public Response decide( @PathParam( "id" )String id )
 	{
 		Decision decision = storage.get( id ).get();
 		decision.decide();
-		return Response.created( URI.create( decision.getId() ) ).entity( decision ).build();
+		return Response
+				.created( URI.create( decision.getId() ) )
+				.entity( decision ).build();
 	}
 }

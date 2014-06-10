@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class Decision
 {
 	@JsonProperty
@@ -41,8 +43,8 @@ public class Decision
 	public Decision( String name, List<String> alternatives, ElementPicker picker )
 	{
 		this.id = UUID.randomUUID().toString();
-		this.name = name;
-		this.alternatives = alternatives;
+		this.name = checkNotNull( name );
+		this.alternatives = checkNotNull( alternatives );
 		this.seenBy = new ArrayList<>();
 		this.decider = Suppliers.memoize( () -> picker.pick( alternatives ) );
 	}
