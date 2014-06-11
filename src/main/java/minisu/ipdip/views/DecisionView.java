@@ -13,6 +13,11 @@ public class DecisionView extends View
 		this.decision = decision;
 	}
 
+	public String getDecidedAlternative()
+	{
+		return decision.getDecidedAlternative().orNull();
+	}
+
 	public Decision getDecision()
 	{
 		return decision;

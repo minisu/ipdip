@@ -6,7 +6,7 @@
 			var scntDiv = $('#seenBy');
 			
 			function connect() {
-				websocket = new WebSocket("ws://localhost:9010/websocket");
+				websocket = new WebSocket("ws://" + window.location.host + "/websocket");
 				websocket.onopen = function(evt) { onOpen(evt) };
 				websocket.onmessage = function(evt) { 
 					$('<li>' + evt.data + '</li>').appendTo(seenBy);
@@ -26,11 +26,19 @@
         	  		<li>${alt}</li>
            </#list>
         </ul>
+        <form action="${decision.id?html}/decide" method="POST">
+        		<input type="submit" value="Decide" <#if decidedAlternative??>disabled</#if>>
+        </form>
         <h2>Seen by</h2>
 		  <ul id="seenBy">
 		     <#list decision.seenBy as user>
 					<li>${user}</li>
 			  </#list>
 		  </ul>
+		  <script>
+        <#if decidedAlternative??>
+        		$( "li:contains('${decidedAlternative}')" ).css( "text-decoration", "underline" );
+        </#if>
+        </script>
     </body>
 </html>

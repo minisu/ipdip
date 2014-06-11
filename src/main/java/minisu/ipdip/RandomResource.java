@@ -22,7 +22,7 @@ import static javax.ws.rs.core.MediaType.TEXT_HTML;
 
 @Path( "decisions/" )
 @Produces( TEXT_HTML)
-@Consumes( APPLICATION_JSON )
+@Consumes( MediaType.APPLICATION_FORM_URLENCODED )
 public class RandomResource
 {
 	private final DecisionStorage storage;
@@ -32,16 +32,6 @@ public class RandomResource
 	{
 		this.storage = storage;
 		this.broadcaster = broadcaster;
-	}
-
-	@GET
-	@Path( "dummy" )
-	public Optional<DecisionView> getDummyDecision( @Context HttpServletRequest request, @PathParam( "id" )String id )
-	{
-		String userId = request.getRemoteHost() + " " + request.getHeader( "User-Agent" );
-		return Optional.of( new Decision( "Should we party?", ImmutableList.of( "Yes", "No" ) ) )
-				.transform( d -> d.wasSeenBy( userId ) )
-				.transform( DecisionView::new );
 	}
 
 	@GET
@@ -55,13 +45,14 @@ public class RandomResource
 	public Optional<DecisionView> getDecision( @Context HttpServletRequest request, @PathParam( "id" )String id )
 	{
 		String userId = request.getRemoteHost() + " " + request.getHeader( "User-Agent" );
-		broadcaster.broadcast( id, userId );
+		broadcaster.broadcast( id, userId ); //TODO: Should only be done if no alternative has been decided
 		return storage.get( id )
 				.transform( d -> d.wasSeenBy( userId ) )
 				.transform( DecisionView::new );
 	}
 
 	@POST
+	@Consumes( MediaType.APPLICATION_JSON )
 	public Response createDecision( Decision decision )
 	{
 		storage.store( decision );
@@ -69,7 +60,6 @@ public class RandomResource
 	}
 
 	@POST
-	@Consumes( MediaType.APPLICATION_FORM_URLENCODED )
 	public Response createDecisionFromForm( MultivaluedMap<String, String> formParams )
 	{
 		String name = formParams.getFirst( "name" );
@@ -83,14 +73,14 @@ public class RandomResource
 				.build();
 	}
 
-	@PUT
+	@POST
 	@Path( "{id}/decide" )
 	public Response decide( @PathParam( "id" )String id )
 	{
 		Decision decision = storage.get( id ).get();
 		decision.decide();
 		return Response
-				.created( URI.create( decision.getId() ) )
-				.entity( decision ).build();
+				.ok( URI.create( decision.getId() ) )
+				.entity( new DecisionView( decision ) ).build();
 	}
 }
