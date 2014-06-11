@@ -1,7 +1,6 @@
 package minisu.ipdip;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.views.View;
 import minisu.ipdip.model.Decision;
 import minisu.ipdip.storage.DecisionStorage;
@@ -17,7 +16,6 @@ import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.List;
 
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.TEXT_HTML;
 
 @Path( "decisions/" )
