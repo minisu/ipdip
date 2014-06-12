@@ -18,7 +18,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import java.net.URI;
-import java.net.URISyntaxException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Map;
 import java.util.UUID;
 
@@ -46,22 +47,19 @@ public class PublicOAuthResource  {
 	@GET
 	@Timed
 	@Path("/request")
-	public Response requestOAuth(@Context HttpServletRequest request) throws URISyntaxException
+	public Response requestOAuth(@Context HttpServletRequest request, @QueryParam( "decisionId" ) String decisionId) throws Exception
 	{
+		String redirectUri = URLEncoder.encode( "http://placeholder.com:9010/decisions/" + decisionId, "UTF-8" );
+
 		// instantiate SocialAuth for this provider type and tuck into session
 		// get the authentication URL for this provider
-		try {
-			SocialAuthManager manager = getSocialAuthManager();
-			request.getSession().setAttribute("authManager", manager);
+		SocialAuthManager manager = getSocialAuthManager();
+		request.getSession().setAttribute("authManager", manager);
 
-			URI url = new URI(manager.getAuthenticationUrl(
-					"twitter", appConfig.getOAuthSuccessUrl()));
-			log.debug("OAuth Auth URL: {}", url);
-			return Response.temporaryRedirect(url).build();
-		} catch (Exception e) {
-			log.error("SocialAuth error: {}", e);
-		}
-		throw new WebApplicationException(Response.Status.BAD_REQUEST);
+		URI url = new URI( manager.getAuthenticationUrl(
+				"twitter", appConfig.getOAuthSuccessUrl() + "?redirect_uri=" + redirectUri ) );
+		log.debug("OAuth Auth URL: {}", url);
+		return Response.temporaryRedirect( url ).build();
 	}
 
 	/**
@@ -73,49 +71,44 @@ public class PublicOAuthResource  {
 	@GET
 	@Timed
 	@Path("/verify")
-	public Response verifyOAuthServerResponse(
-			@Context HttpServletRequest request) {
-
+	public Response verifyOAuthServerResponse( @Context HttpServletRequest request,
+															 @QueryParam( "redirect_uri" ) String redirectUri ) throws Exception
+	{
 		// this was placed in the session in the /request resource
 		SocialAuthManager manager = (SocialAuthManager) request.getSession()
 				.getAttribute("authManager");
 
 		if (manager != null) {
-			try {
-				// call connect method of manager which returns the provider
-				// object
-				Map<String, String> params = SocialAuthUtil
-						.getRequestParametersMap( request );
-				AuthProvider provider = manager.connect(params);
+			// call connect method of manager which returns the provider object
+			Map<String, String> params = SocialAuthUtil
+					.getRequestParametersMap( request );
+			AuthProvider provider = manager.connect(params);
 
-				// get profile
-				Profile p = provider.getUserProfile();
+			// get profile
+			Profile p = provider.getUserProfile();
 
-				log.info("Logging in user '{}'", p);
+			log.info("Logging in user '{}'", p);
 
-				// at this point, we've been validated, so save off this user's info
-				User tempUser = new User(null, UUID.randomUUID());
-				tempUser.setOpenIDIdentifier(p.getValidatedId());
-				tempUser.setOAuthInfo(provider.getAccessGrant());
+			// at this point, we've been validated, so save off this user's info
+			User tempUser = new User(p.getDisplayName(), UUID.randomUUID());
+			tempUser.setOpenIDIdentifier( p.getValidatedId() );
+			tempUser.setOAuthInfo(provider.getAccessGrant());
 
-				// Search for a pre-existing User matching the temp User
-				Optional<User> userOptional = UserCache.INSTANCE
-						.getByOpenIDIdentifier(tempUser.getOpenIDIdentifier());
-				if (!userOptional.isPresent()) {
-					// Persist the user with the generated session token
-					UserCache.INSTANCE.put(tempUser.getSessionToken(),
-							tempUser);
-				} else {
-					tempUser = userOptional.get();
-				}
-
-				return Response
-						.temporaryRedirect(new URI("/private/home"))
-						.cookie(replaceSessionTokenCookie( Optional.of( tempUser )))
-						.build();
-			} catch (Exception e1) {
-				log.error("Error reading profile info: {}, {}", e1.getMessage(), e1.getCause().getMessage());
+			// Search for a pre-existing User matching the temp User
+			Optional<User> userOptional = UserCache.INSTANCE
+					.getByOpenIDIdentifier( tempUser.getOpenIDIdentifier() );
+			if (!userOptional.isPresent()) {
+				// Persist the user with the generated session token
+				UserCache.INSTANCE.put(tempUser.getSessionToken(),
+						tempUser);
+			} else {
+				tempUser = userOptional.get();
 			}
+
+			return Response
+					.temporaryRedirect( new URI( URLDecoder.decode( redirectUri, "UTF-8" ) ) )
+					.cookie( replaceSessionTokenCookie( Optional.of( tempUser ) ) )
+					.build();
 		}
 
 		// Must have failed to be here

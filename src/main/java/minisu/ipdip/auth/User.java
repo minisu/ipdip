@@ -89,36 +89,6 @@ public class User {
 	}
 
 	/**
-	 * @return The user name to authenticate with the client
-	 */
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-	/**
-	 * @return The digested password to provide authentication between the user
-	 *         and the client
-	 */
-	public String getPasswordDigest() {
-		return passwordDigest;
-	}
-
-	/**
-	 * <h3>Note that it is expected that Jasypt or similar is used prior to
-	 * storage</h3>
-	 *
-	 * @param passwordDigest
-	 *            The password digest
-	 */
-	public void setPasswordDigest(String passwordDigest) {
-		this.passwordDigest = passwordDigest;
-	}
-
-	/**
 	 *
 	 * @return The OpenID discovery information (phase 1 of authentication)
 	 */
