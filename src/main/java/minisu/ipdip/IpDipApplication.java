@@ -4,9 +4,11 @@ import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
+import minisu.ipdip.auth.PublicOAuthResource;
 import minisu.ipdip.storage.InMemoryStorage;
 import minisu.ipdip.websockets.BroadcasterServlet;
 import minisu.ipdip.websockets.BroadcastingCentral;
+import org.eclipse.jetty.server.session.SessionHandler;
 
 import javax.servlet.ServletRegistration;
 
@@ -25,6 +27,9 @@ public class IpDipApplication extends Application<IpDipConfig>
 		environment.jersey().register( new RandomResource( new InMemoryStorage(), broadcastingCentral ) );
 		ServletRegistration.Dynamic websocket = environment.servlets().addServlet( "websocket", new BroadcasterServlet( broadcastingCentral ) );
 		websocket.addMapping( "/websocket/*" );
+
+		environment.jersey().register( new PublicOAuthResource( ipDipConfig ) );
+		environment.servlets().setSessionHandler(new SessionHandler());
 	}
 
 	public static void main(String... args) throws Exception
