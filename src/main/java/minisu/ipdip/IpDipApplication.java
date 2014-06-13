@@ -5,6 +5,7 @@ import io.dropwizard.auth.oauth.OAuthProvider;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
+import minisu.ipdip.auth.AuthProvider;
 import minisu.ipdip.auth.OAuthAuthenticator;
 import minisu.ipdip.auth.PublicOAuthResource;
 import minisu.ipdip.storage.InMemoryStorage;
@@ -33,7 +34,7 @@ public class IpDipApplication extends Application<IpDipConfig>
 		environment.jersey().register( new PublicOAuthResource( ipDipConfig ) );
 		environment.servlets().setSessionHandler( new SessionHandler() );
 
-		environment.jersey().register( new OAuthProvider<>( new OAuthAuthenticator(), "protected-resources" ) );
+		environment.jersey().register( new AuthProvider( new OAuthAuthenticator(), "protected-resources" ) );
 	}
 
 	public static void main(String... args) throws Exception
