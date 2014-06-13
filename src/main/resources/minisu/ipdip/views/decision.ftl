@@ -40,5 +40,9 @@
         		$( "li:contains('${decidedAlternative}')" ).css( "text-decoration", "underline" );
         </#if>
         </script>
+        <hr>
+        <p><a href="/oauth/request?decisionId=${decision.id?html}">
+        		<img src="https://dev.twitter.com/sites/default/files/images_documentation/sign-in-with-twitter-gray.png">
+        </a></p>
     </body>
 </html>

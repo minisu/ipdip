@@ -1,11 +1,15 @@
 package minisu.ipdip;
 
 import com.google.common.base.Optional;
+import io.dropwizard.auth.Auth;
 import io.dropwizard.views.View;
+import minisu.ipdip.auth.User;
 import minisu.ipdip.model.Decision;
 import minisu.ipdip.storage.DecisionStorage;
 import minisu.ipdip.views.DecisionView;
 import minisu.ipdip.websockets.Broadcaster;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
@@ -23,6 +27,8 @@ import static javax.ws.rs.core.MediaType.TEXT_HTML;
 @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
 public class RandomResource
 {
+	static Logger log = LoggerFactory.getLogger( RandomResource.class );
+
 	private final DecisionStorage storage;
 	private final Broadcaster broadcaster;
 
@@ -40,8 +46,10 @@ public class RandomResource
 
 	@GET
 	@Path( "{id}" )
-	public Optional<DecisionView> getDecision( @Context HttpServletRequest request, @PathParam( "id" )String id )
+	public Optional<DecisionView> getDecision( @Context HttpServletRequest request, @Auth(required = false) User user, @PathParam( "id" )String id )
 	{
+		log.info( "user is " + user);
+
 		String userId = request.getRemoteHost() + " " + request.getHeader( "User-Agent" );
 		broadcaster.broadcast( id, userId ); //TODO: Should only be done if no alternative has been decided
 		return storage.get( id )

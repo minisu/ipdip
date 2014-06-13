@@ -139,7 +139,7 @@ public class PublicOAuthResource  {
 
 			String value = user.get().getSessionToken().toString();
 
-			log.debug("Replacing session token with {}", value);
+			log.info("Replacing session token with {}", value);
 
 			return new NewCookie(
 					"IpDip-session",

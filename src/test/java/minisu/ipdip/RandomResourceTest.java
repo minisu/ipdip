@@ -1,5 +1,7 @@
 package minisu.ipdip;
 
+import com.google.common.base.Optional;
+import minisu.ipdip.auth.AnonymousUser;
 import minisu.ipdip.model.Decision;
 import minisu.ipdip.storage.InMemoryStorage;
 import minisu.ipdip.websockets.BroadcastingCentral;
@@ -83,7 +85,7 @@ public class RandomResourceTest
 		HttpServletRequest request = mock( HttpServletRequest.class );
 		when( request.getRemoteHost() ).thenReturn( DEFAULT_IP );
 		when( request.getHeader( anyString() ) ).thenReturn( userAgent );
-		return resource.getDecision( request, decisionLocation.toString() ).get().getDecision();
+		return resource.getDecision( request, AnonymousUser.create(), decisionLocation.toString() ).get().getDecision();
 	}
 
 	private URI createDecision()
