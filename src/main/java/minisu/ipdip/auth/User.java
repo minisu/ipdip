@@ -41,18 +41,6 @@ public class User {
 	protected String passwordDigest = null;
 
 	/**
-	 * <p>
-	 * The OpenID discovery information used in phase 1 of authenticating
-	 * against an OpenID server
-	 * </p>
-	 * <p>
-	 * Once the OpenID identifier is in place, this can be safely deleted
-	 * </p>
-	 */
-	@JsonProperty
-	private DiscoveryInformationMemento openIDDiscoveryInformationMemento;
-
-	/**
 	 * An OpenID identifier that is held across sessions
 	 */
 	@JsonProperty
@@ -86,19 +74,6 @@ public class User {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	/**
-	 *
-	 * @return The OpenID discovery information (phase 1 of authentication)
-	 */
-	public DiscoveryInformationMemento getOpenIDDiscoveryInformationMemento() {
-		return openIDDiscoveryInformationMemento;
-	}
-
-	public void setOpenIDDiscoveryInformationMemento(
-			DiscoveryInformationMemento openIDDiscoveryInformationMemento) {
-		this.openIDDiscoveryInformationMemento = openIDDiscoveryInformationMemento;
 	}
 
 	/**
@@ -142,7 +117,7 @@ public class User {
 	@Override
 	public String toString() {
 		return Objects.toStringHelper( this )
-				.add("userName", userName)
+				.add("id", id)
 				.add("openIDIdentifier", openIDIdentifier)
 				.add("sessionToken", sessionToken)
 				.toString();
