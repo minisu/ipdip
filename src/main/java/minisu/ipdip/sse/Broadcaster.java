@@ -1,4 +1,4 @@
-package minisu.ipdip.websockets;
+package minisu.ipdip.sse;
 
 public interface Broadcaster
 {

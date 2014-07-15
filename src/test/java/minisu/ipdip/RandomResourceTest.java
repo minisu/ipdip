@@ -1,10 +1,9 @@
 package minisu.ipdip;
 
-import com.google.common.base.Optional;
 import minisu.ipdip.auth.AnonymousUser;
 import minisu.ipdip.model.Decision;
 import minisu.ipdip.storage.InMemoryStorage;
-import minisu.ipdip.websockets.BroadcastingCentral;
+import minisu.ipdip.sse.BroadcastingCentral;
 import org.junit.Before;
 import org.junit.Test;
 

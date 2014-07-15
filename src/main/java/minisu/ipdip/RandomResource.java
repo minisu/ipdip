@@ -7,7 +7,7 @@ import minisu.ipdip.auth.User;
 import minisu.ipdip.model.Decision;
 import minisu.ipdip.storage.DecisionStorage;
 import minisu.ipdip.views.DecisionView;
-import minisu.ipdip.websockets.Broadcaster;
+import minisu.ipdip.sse.Broadcaster;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

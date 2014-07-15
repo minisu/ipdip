@@ -3,19 +3,10 @@
 	<head>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>  
 		<script type="text/javascript">
-			var scntDiv = $('#seenBy');
-			
-			function connect() {
-				websocket = new WebSocket("ws://" + window.location.host + "/websocket");
-				websocket.onopen = function(evt) { onOpen(evt) };
-				websocket.onmessage = function(evt) { 
-					$('<li>' + evt.data + '</li>').appendTo(seenBy);
-				};
-			}
-			
-			function onOpen(evt) { websocket.send( "${decision.id?html}" ); }
-			
-			window.addEventListener("load", connect, false);
+            var source = new EventSource("subscribe?channel=${decision.id?html}");
+            source.onmessage = function(event) {
+                document.getElementById("result").innerHTML += '<li>' + event.data + '</li>'
+            };
 		</script>
 	</head>
     <body>
