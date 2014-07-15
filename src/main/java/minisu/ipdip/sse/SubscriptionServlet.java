@@ -20,6 +20,7 @@ public class SubscriptionServlet extends EventSourceServlet {
         SseEventSource eventSource = new SseEventSource();
 
         subscriptionService.subscribe( eventSource, channel );
+        eventSource.setOnClose( () -> subscriptionService.unsubscribe(eventSource, channel) );
 
         return eventSource;
     }
