@@ -36,6 +36,7 @@ public class SseEventSource implements EventSource, Consumer<Event> {
         log.info("pushEvent");
         emitter.ifPresent(emitter -> {
             try {
+                log.debug("Pushing event: " + event);
                 emitter.event(event.type, event.data);
             } catch(IOException e) {
                 log.warn("Failed to push to client ", e);

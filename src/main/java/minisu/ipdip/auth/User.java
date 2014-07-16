@@ -33,14 +33,6 @@ public class User {
 	private String userName;
 
 	/**
-	 * <p>
-	 * A user password (not plaintext and optional for anonymity reasons)
-	 * </p>
-	 */
-	@JsonProperty
-	protected String passwordDigest = null;
-
-	/**
 	 * An OpenID identifier that is held across sessions
 	 */
 	@JsonProperty

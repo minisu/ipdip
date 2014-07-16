@@ -3,10 +3,10 @@
 	<head>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>  
 		<script type="text/javascript">
-            var source = new EventSource("subscribe?channel=${decision.id?html}");
-            source.onmessage = function(event) {
-                document.getElementById("result").innerHTML += '<li>' + event.data + '</li>'
-            };
+            var source = new EventSource("/subscribe?channel=${decision.id?html}");
+            source.addEventListener("newVisitor", function(event) {
+                document.getElementById("seenBy").innerHTML += '<li>' + event.data + '</li>'
+            });
 		</script>
 	</head>
     <body>

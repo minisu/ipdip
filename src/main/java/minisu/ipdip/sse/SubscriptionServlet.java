@@ -16,7 +16,9 @@ public class SubscriptionServlet extends EventSourceServlet {
 
     @Override
     public EventSource newEventSource(HttpServletRequest request) {
+
         String channel = request.getParameter( "channel" );
+        System.out.println("Subscriber to channel " + channel);
         SseEventSource eventSource = new SseEventSource();
 
         subscriptionService.subscribe( eventSource, channel );
