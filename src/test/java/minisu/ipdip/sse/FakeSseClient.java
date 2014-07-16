@@ -17,13 +17,13 @@ public class FakeSseClient {
     private final FakeSseEmitter emitter = new FakeSseEmitter();
     private final EventSource eventSource;
 
-    public FakeSseClient(String query, SubscriptionServlet servlet) throws IOException {
-        HttpServletRequest request = createRequestWithQuery(query);
+    public FakeSseClient(String channel, SubscriptionServlet servlet) throws IOException {
+        HttpServletRequest request = createRequestForChannel(channel);
         eventSource = servlet.newEventSource(request);
         eventSource.onOpen(emitter);
     }
 
-    private static HttpServletRequest createRequestWithQuery(String query) {
+    private static HttpServletRequest createRequestForChannel(String query) {
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getParameter(anyString())).thenReturn(query);
         return request;
@@ -31,10 +31,5 @@ public class FakeSseClient {
 
     public Set<Event> receivedPushes() {
         return emitter.emittedStrings;
-    }
-
-    public boolean receivedExactly(Event... expectedEvents) {
-        return receivedPushes().containsAll(Arrays.asList(expectedEvents))
-                && receivedPushes().size() == expectedEvents.length;
     }
 }

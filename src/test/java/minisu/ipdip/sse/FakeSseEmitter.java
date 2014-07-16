@@ -16,9 +16,7 @@ public class FakeSseEmitter implements EventSource.Emitter {
     public void event(String name, String data) throws IOException { emittedStrings.add(Event.of(name, data)); }
 
     @Override
-    public void data(String data) throws IOException {
-
-    }
+    public void data(String data) throws IOException { }
 
     @Override
     public void comment(String comment) throws IOException { }

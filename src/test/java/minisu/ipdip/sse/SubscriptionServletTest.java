@@ -1,6 +1,6 @@
 package minisu.ipdip.sse;
 
-import static junit.framework.TestCase.assertTrue;
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -11,11 +11,13 @@ import minisu.ipdip.auth.AnonymousUser;
 import minisu.ipdip.model.Decision;
 import minisu.ipdip.storage.InMemoryStorage;
 
+import java.io.IOException;
 import java.net.URI;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
+import org.junit.Before;
 import org.junit.Test;
 
 public class SubscriptionServletTest {
@@ -23,26 +25,55 @@ public class SubscriptionServletTest {
     public static final String DEFAULT_IP = "0.0.0.0";
 
     private RandomResource resource;
+    private SubscriptionServlet servlet;
 
-    @Test
-    public void abc() throws Exception {
+    @Before
+    public void setup() {
         BroadcastingCentral broadcastingCentral = new BroadcastingCentral();
         resource = new RandomResource(new InMemoryStorage(), broadcastingCentral);
-        SubscriptionServlet servlet = new SubscriptionServlet(broadcastingCentral);
+        servlet = new SubscriptionServlet(broadcastingCentral);
+    }
+
+    @Test
+    public void decisionsShouldBeEmitted() throws Exception {
 
         Response response = resource.createDecision(DummyDecision.create());
         URI decisionLocation = ( URI )response.getMetadata().getFirst( "Location" );
         Decision decision = getDecision(decisionLocation);
 
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getParameter(anyString())).thenReturn(decision.getId());
-
-        FakeSseClient client = new FakeSseClient(decision.getId(), servlet);
+        FakeSseClient client = createFakeClient(decision.getId());
 
         resource.decide(decision.getId());
 
-        System.out.println(client.receivedPushes());
-        assertTrue(client.receivedExactly(Event.of("decisionMade", "Yes")));
+        assertThat(client.receivedPushes()).containsExactly(Event.of("decisionMade", "Yes"));
+    }
+
+    @Test
+    public void newVisitorsShouldBeEmitted() throws Exception {
+
+        Response response = resource.createDecision(DummyDecision.create());
+        URI decisionLocation = ( URI )response.getMetadata().getFirst( "Location" );
+        Decision decision = getDecision(decisionLocation);
+
+        FakeSseClient client = createFakeClient(decision.getId());
+        getDecisionAs(decisionLocation, "Chrome");
+
+        assertThat(client.receivedPushes()).containsExactly(Event.of("newVisitor", "0.0.0.0 Chrome"));
+    }
+
+    @Test
+    public void newVisitorsShouldNotBeEmittedAfterDecisionHasBeenMade() throws Exception {
+
+        Response response = resource.createDecision(DummyDecision.create());
+        URI decisionLocation = ( URI )response.getMetadata().getFirst( "Location" );
+        Decision decision = getDecision(decisionLocation);
+
+        FakeSseClient client = createFakeClient(decision.getId());
+        resource.decide(decision.getId());
+
+        getDecisionAs(decisionLocation, "Chrome");
+
+        assertThat(client.receivedPushes()).isEmpty();
     }
 
     private Decision getDecision( URI decisionLocation )
@@ -56,5 +87,9 @@ public class SubscriptionServletTest {
         when( request.getRemoteHost() ).thenReturn( DEFAULT_IP );
         when( request.getHeader( anyString() ) ).thenReturn( userAgent );
         return resource.getDecision( request, AnonymousUser.create(), decisionLocation.toString() ).get().getDecision();
+    }
+
+    private FakeSseClient createFakeClient(String decisionId) throws IOException {
+        return new FakeSseClient(decisionId, servlet);
     }
 }

@@ -52,7 +52,8 @@ public class RandomResource
 		log.info( "user is " + user);
 
 		String userId = request.getRemoteHost() + " " + request.getHeader( "User-Agent" );
-		broadcaster.broadcast( id, Event.newVisitor(userId) ); //TODO: Should only be done if no alternative has been decided
+        System.out.println("us---> " + userId);
+        broadcaster.broadcast( id, Event.newVisitor(userId) ); //TODO: Should only be done if no alternative has been decided
 		return storage.get( id )
 				.transform( d -> d.wasSeenBy( userId ) )
 				.transform( DecisionView::new );
