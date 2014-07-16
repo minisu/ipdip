@@ -1,0 +1,1 @@
+web: java $JAVA_OPTS $WEB_JAVA_OPTS -Ddw.server.connector.type=http -Ddw.server.connector.port=$PORT -jar target/ipdip.jar server etc/config.yml

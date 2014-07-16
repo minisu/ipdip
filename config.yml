@@ -2,9 +2,9 @@ logging:
   level: INFO
 
 server:
-  applicationConnectors:
-  - type: http
-    port: 9010
+  type: simple
+  applicationContextPath: /
+  adminContextPath: /admin
 
 # Define OAuth settings
 oauthSuccessUrl: http://placeholder.com:9010/oauth/verify

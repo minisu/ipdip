@@ -77,7 +77,7 @@ public class SubscriptionServletTest {
         Response response = resource.createDecision(DummyDecision.create());
         return ( URI )response.getMetadata().getFirst( "Location" );
     }
-    
+
     private Decision getDecision( URI decisionLocation )
     {
         return getDecisionAs( decisionLocation, "Lynx" );
