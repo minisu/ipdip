@@ -37,8 +37,7 @@ public class SubscriptionServletTest {
     @Test
     public void decisionsShouldBeEmitted() throws Exception {
 
-        Response response = resource.createDecision(DummyDecision.create());
-        URI decisionLocation = ( URI )response.getMetadata().getFirst( "Location" );
+        URI decisionLocation = createDecision();
         Decision decision = getDecision(decisionLocation);
 
         FakeSseClient client = createFakeClient(decision.getId());
@@ -51,8 +50,7 @@ public class SubscriptionServletTest {
     @Test
     public void newVisitorsShouldBeEmitted() throws Exception {
 
-        Response response = resource.createDecision(DummyDecision.create());
-        URI decisionLocation = ( URI )response.getMetadata().getFirst( "Location" );
+        URI decisionLocation = createDecision();
         Decision decision = getDecision(decisionLocation);
 
         FakeSseClient client = createFakeClient(decision.getId());
@@ -64,8 +62,7 @@ public class SubscriptionServletTest {
     @Test
     public void newVisitorsShouldNotBeEmittedAfterDecisionHasBeenMade() throws Exception {
 
-        Response response = resource.createDecision(DummyDecision.create());
-        URI decisionLocation = ( URI )response.getMetadata().getFirst( "Location" );
+        URI decisionLocation = createDecision();
         Decision decision = getDecision(decisionLocation);
 
         FakeSseClient client = createFakeClient(decision.getId());
@@ -76,6 +73,11 @@ public class SubscriptionServletTest {
         assertThat(client.receivedPushes()).isEmpty();
     }
 
+    private URI createDecision() {
+        Response response = resource.createDecision(DummyDecision.create());
+        return ( URI )response.getMetadata().getFirst( "Location" );
+    }
+    
     private Decision getDecision( URI decisionLocation )
     {
         return getDecisionAs( decisionLocation, "Lynx" );
