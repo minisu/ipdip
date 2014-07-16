@@ -5,6 +5,7 @@ import io.dropwizard.auth.Auth;
 import io.dropwizard.views.View;
 import minisu.ipdip.auth.User;
 import minisu.ipdip.model.Decision;
+import minisu.ipdip.sse.Event;
 import minisu.ipdip.storage.DecisionStorage;
 import minisu.ipdip.views.DecisionView;
 import minisu.ipdip.sse.Broadcaster;
@@ -51,7 +52,7 @@ public class RandomResource
 		log.info( "user is " + user);
 
 		String userId = request.getRemoteHost() + " " + request.getHeader( "User-Agent" );
-		broadcaster.broadcast( id, userId ); //TODO: Should only be done if no alternative has been decided
+		broadcaster.broadcast( id, Event.newVisitor(userId) ); //TODO: Should only be done if no alternative has been decided
 		return storage.get( id )
 				.transform( d -> d.wasSeenBy( userId ) )
 				.transform( DecisionView::new );
@@ -85,6 +86,7 @@ public class RandomResource
 	{
 		Decision decision = storage.get( id ).get();
 		decision.decide();
+        broadcaster.broadcast( id, Event.decisionMade(decision.getDecidedAlternative().get()) );
 		return Response
 				.ok( URI.create( decision.getId() ) )
 				.entity( new DecisionView( decision ) ).build();

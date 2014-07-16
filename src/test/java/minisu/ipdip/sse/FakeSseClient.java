@@ -29,16 +29,12 @@ public class FakeSseClient {
         return request;
     }
 
-    public Set<String> receivedPushes() {
+    public Set<Event> receivedPushes() {
         return emitter.emittedStrings;
     }
 
-    public boolean receivedExactly(String... expectedBundles) {
-        return receivedPushes().containsAll(Arrays.asList(expectedBundles))
-                && receivedPushes().size() == expectedBundles.length;
-    }
-
-    public void disconnect() {
-        eventSource.onClose();
+    public boolean receivedExactly(Event... expectedEvents) {
+        return receivedPushes().containsAll(Arrays.asList(expectedEvents))
+                && receivedPushes().size() == expectedEvents.length;
     }
 }

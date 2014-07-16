@@ -8,7 +8,7 @@ import org.eclipse.jetty.servlets.EventSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SseEventSource implements EventSource, Consumer<String> {
+public class SseEventSource implements EventSource, Consumer<Event> {
 
     private static final Logger log = LoggerFactory.getLogger(SseEventSource.class);
 
@@ -32,11 +32,11 @@ public class SseEventSource implements EventSource, Consumer<String> {
     }
 
     @Override
-    public void accept(final String dataToSend) {
+    public void accept(Event event) {
         log.info("pushEvent");
         emitter.ifPresent(emitter -> {
             try {
-                emitter.data(dataToSend);
+                emitter.event(event.type, event.data);
             } catch(IOException e) {
                 log.warn("Failed to push to client ", e);
             }

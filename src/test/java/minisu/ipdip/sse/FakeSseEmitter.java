@@ -10,18 +10,18 @@ import org.eclipse.jetty.servlets.EventSource;
 
 public class FakeSseEmitter implements EventSource.Emitter {
 
-    public final Set<String> emittedStrings = new HashSet<>();
+    public final Set<Event> emittedStrings = new HashSet<>();
 
     @Override
-    public void event(final String name, final String data) throws IOException { }
+    public void event(String name, String data) throws IOException { emittedStrings.add(Event.of(name, data)); }
 
     @Override
-    public void data(final String data) throws IOException {
-        emittedStrings.add(data);
+    public void data(String data) throws IOException {
+
     }
 
     @Override
-    public void comment(final String comment) throws IOException { }
+    public void comment(String comment) throws IOException { }
 
     @Override
     public void close() { }

@@ -1,7 +1,6 @@
 package minisu.ipdip.sse;
 
 import static junit.framework.TestCase.assertTrue;
-import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -12,13 +11,11 @@ import minisu.ipdip.auth.AnonymousUser;
 import minisu.ipdip.model.Decision;
 import minisu.ipdip.storage.InMemoryStorage;
 
-import java.io.IOException;
 import java.net.URI;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
-import org.eclipse.jetty.servlets.EventSource;
 import org.junit.Test;
 
 public class SubscriptionServletTest {
@@ -45,7 +42,7 @@ public class SubscriptionServletTest {
         resource.decide(decision.getId());
 
         System.out.println(client.receivedPushes());
-        assertTrue(client.receivedExactly("bla"));
+        assertTrue(client.receivedExactly(Event.of("decisionMade", "Yes")));
     }
 
     private Decision getDecision( URI decisionLocation )
