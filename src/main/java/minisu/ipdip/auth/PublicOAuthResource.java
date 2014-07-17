@@ -57,7 +57,7 @@ public class PublicOAuthResource  {
 	@Path("/request")
 	public Response requestOAuth(@Context HttpServletRequest request, @QueryParam( "decisionId" ) String decisionId) throws Exception
 	{
-		String redirectUri = URLEncoder.encode( "http://placeholder.com:9010/decisions/" + decisionId, "UTF-8" );
+		String redirectUri = URLEncoder.encode( "http://agile-scrubland-4645.herokuapp.com/decisions/" + decisionId, "UTF-8" );
 
 		// instantiate SocialAuth for this provider type and tuck into session
 		// get the authentication URL for this provider
