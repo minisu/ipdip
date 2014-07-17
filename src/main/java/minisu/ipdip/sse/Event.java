@@ -1,5 +1,7 @@
 package minisu.ipdip.sse;
 
+import minisu.ipdip.auth.User;
+
 import com.google.common.base.Objects;
 
 public class Event {
@@ -18,6 +20,10 @@ public class Event {
 
     public static Event newVisitor(String name) {
         return new Event("newVisitor", name);
+    }
+
+    public static Event newVisitor(User user) {
+        return new Event("newVisitor", user.getId() + " " + user.getProfileImageURL() );
     }
 
     public static Event of(String type, String data) {

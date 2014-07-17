@@ -21,7 +21,9 @@
             var source = new EventSource("/subscribe?channel={{id}}");
             {{/decision}}
             source.addEventListener("newVisitor", function(event) {
-                document.getElementById("seenBy").innerHTML += "<li class='list-group-item'>" + event.data + '</li>'
+                var userId = event.data.split(" ")[0];
+                var avatarUrl = event.data.split(" ")[1];
+                document.getElementById("seenBy").innerHTML += "<li class='list-group-item'><img width='48' height='48' src='" + avatarUrl + "'> " + userId + "</li>"
             });
             source.addEventListener("decisionMade", function(event) {
                 var decidedAlternative = $('li').filter(function() {

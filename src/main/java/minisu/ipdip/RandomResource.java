@@ -3,6 +3,7 @@ package minisu.ipdip;
 import com.google.common.base.Optional;
 import io.dropwizard.auth.Auth;
 import io.dropwizard.views.View;
+import minisu.ipdip.auth.AnonymousUser;
 import minisu.ipdip.auth.User;
 import minisu.ipdip.model.Decision;
 import minisu.ipdip.sse.Event;
@@ -49,24 +50,21 @@ public class RandomResource
 	@Path( "{id}" )
 	public Optional<DecisionView> getDecision( @Context HttpServletRequest request, @Auth(required = false) User user, @PathParam( "id" )String id )
 	{
-		log.info( "user is " + user);
+		log.debug("user is " + user);
 
-        broadcaster.broadcast( id, Event.newVisitor(user.getId()) ); //TODO: Should only be done if no alternative has been decided
-		return storage.get( id )
-				.transform( d -> d.wasSeenBy(user) )
-				.transform( DecisionView::new );
+        Optional<Decision> decision = storage.get(id);
+        if(!decision.isPresent()) {
+            return Optional.absent();
+        }
+
+        if(!user.isAnonymous()) {
+            decision.get().wasSeenBy(user);
+            broadcaster.broadcast(id,
+                    Event.newVisitor(user)); //TODO: Should only be done if no alternative has been decided
+        }
+
+		return decision.transform( DecisionView::new );
 	}
-
-    @GET
-    @Produces( MediaType.APPLICATION_JSON )
-    @Path( "{id}/raw" )
-    public Optional<Decision> getDecisionRaw( @Context HttpServletRequest request, @Auth(required = false) User user, @PathParam( "id" )String id )
-    {
-        log.debug( "user is " + user);
-        broadcaster.broadcast( id, Event.newVisitor(user.getId()) ); //TODO: Should only be done if no alternative has been decided
-        return storage.get(id)
-                .transform( d -> d.wasSeenBy(user) );
-    }
 
 	@POST
 	@Consumes( MediaType.APPLICATION_JSON )

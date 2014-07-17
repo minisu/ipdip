@@ -53,6 +53,9 @@ public class User {
     @JsonProperty
     private final String profileImageURL;
 
+    @JsonProperty
+    private boolean anonymous;
+
 	@JsonCreator
 	public User(@JsonProperty("id") String id,
                 @JsonProperty("profileImageURL") String profileImageURL,
@@ -62,6 +65,21 @@ public class User {
 		this.sessionToken = sessionToken;
         this.profileImageURL = profileImageURL;
 	}
+
+    public User(@JsonProperty("id") String id,
+                @JsonProperty("profileImageURL") String profileImageURL,
+                @JsonProperty("sessionToken") UUID sessionToken,
+                boolean anonymous) {
+
+        this.id = id;
+        this.sessionToken = sessionToken;
+        this.profileImageURL = profileImageURL;
+        this.anonymous = anonymous;
+    }
+
+    public boolean isAnonymous() {
+        return anonymous;
+    }
 
 	public String getId() {
 		return id;
@@ -112,6 +130,15 @@ public class User {
 		AccessGrant grant = (AccessGrant) ois.readObject();
 		return grant;
 	}
+
+    @Override
+    public boolean equals(Object other) {
+        if(other instanceof User) {
+            User that = (User) other;
+            return this.getId() == that.getId();
+        }
+        return false;
+    }
 
 	@Override
 	public String toString() {
