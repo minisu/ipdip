@@ -90,7 +90,7 @@ public class PublicOAuthResource  {
 			log.info("Logging in user '{}'", p);
 
 			// at this point, we've been validated, so save off this user's info
-			User tempUser = new User(p.getDisplayName(), UUID.randomUUID());
+			User tempUser = new User(p.getDisplayName(), p.getProfileImageURL(), UUID.randomUUID());
 			tempUser.setOpenIDIdentifier( p.getValidatedId() );
 			tempUser.setOAuthInfo(provider.getAccessGrant());
 

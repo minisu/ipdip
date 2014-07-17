@@ -42,7 +42,7 @@ public class RandomResource
 	@GET
 	public View index()
 	{
-		return new View("index.ftl") {};
+		return new View("index.mustache") {};
 	}
 
 	@GET
@@ -51,11 +51,9 @@ public class RandomResource
 	{
 		log.info( "user is " + user);
 
-		String userId = request.getRemoteHost() + " " + request.getHeader( "User-Agent" );
-        System.out.println("us---> " + userId);
-        broadcaster.broadcast( id, Event.newVisitor(userId) ); //TODO: Should only be done if no alternative has been decided
+        broadcaster.broadcast( id, Event.newVisitor(user.getId()) ); //TODO: Should only be done if no alternative has been decided
 		return storage.get( id )
-				.transform( d -> d.wasSeenBy( userId ) )
+				.transform( d -> d.wasSeenBy(user) )
 				.transform( DecisionView::new );
 	}
 
@@ -64,13 +62,10 @@ public class RandomResource
     @Path( "{id}/raw" )
     public Optional<Decision> getDecisionRaw( @Context HttpServletRequest request, @Auth(required = false) User user, @PathParam( "id" )String id )
     {
-        log.info( "user is " + user);
-
-        String userId = request.getRemoteHost() + " " + request.getHeader( "User-Agent" );
-        System.out.println("us---> " + userId);
-        broadcaster.broadcast( id, Event.newVisitor(userId) ); //TODO: Should only be done if no alternative has been decided
-        return storage.get( id )
-                .transform( d -> d.wasSeenBy( userId ) );
+        log.debug( "user is " + user);
+        broadcaster.broadcast( id, Event.newVisitor(user.getId()) ); //TODO: Should only be done if no alternative has been decided
+        return storage.get(id)
+                .transform( d -> d.wasSeenBy(user) );
     }
 
 	@POST

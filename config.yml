@@ -5,6 +5,9 @@ server:
   type: simple
   applicationContextPath: /
   adminContextPath: /admin
+  connector:
+    type: http
+    port: 9010
 
 # Define OAuth settings
 oauthSuccessUrl: http://placeholder.com:9010/oauth/verify

@@ -23,6 +23,7 @@ public class User {
 	 * Unique identifier for this entity
 	 * </p>
 	 */
+    @JsonProperty
 	private String id;
 
 	/**
@@ -35,29 +36,31 @@ public class User {
 	/**
 	 * An OpenID identifier that is held across sessions
 	 */
-	@JsonProperty
 	private String openIDIdentifier;
 
 	/**
 	 * OAuth grant info in JSON format so we don't have to keep the SocialAuth
 	 * Manager alive
 	 */
-	@JsonProperty
 	private byte oauthGrantInfo[];
 
 	/**
 	 * A shared secret between the cluster and the user's browser that is
 	 * revoked when the session ends
 	 */
-	@JsonProperty
 	private UUID sessionToken;
+
+    @JsonProperty
+    private final String profileImageURL;
 
 	@JsonCreator
 	public User(@JsonProperty("id") String id,
+                @JsonProperty("profileImageURL") String profileImageURL,
 					@JsonProperty("sessionToken") UUID sessionToken) {
 
 		this.id = id;
 		this.sessionToken = sessionToken;
+        this.profileImageURL = profileImageURL;
 	}
 
 	public String getId() {
@@ -67,6 +70,10 @@ public class User {
 	public void setId(String id) {
 		this.id = id;
 	}
+
+    public String getProfileImageURL() {
+        return profileImageURL;
+    }
 
 	/**
 	 * @return The OpenID identifier

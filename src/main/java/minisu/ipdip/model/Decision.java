@@ -6,6 +6,8 @@ import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+
+import minisu.ipdip.auth.User;
 import minisu.ipdip.elementpicker.ElementPicker;
 import minisu.ipdip.elementpicker.RandomElementPicker;
 
@@ -25,7 +27,7 @@ public class Decision
 	private final List<String> alternatives;
 
 	@JsonProperty
-	private final Set<String> seenBy;
+	private final Set<User> seenBy;
 
 	private final Supplier<String> decider;
 
@@ -54,7 +56,7 @@ public class Decision
 		return decision;
 	}
 
-	public Decision wasSeenBy( String user )
+	public Decision wasSeenBy( User user )
 	{
         seenBy.add( user );
 		return this;
@@ -75,7 +77,7 @@ public class Decision
 		return alternatives;
 	}
 
-	public Set<String> getSeenBy()
+	public Set<User> getSeenBy()
 	{
 		return seenBy;
 	}

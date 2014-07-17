@@ -59,28 +59,28 @@
                     </div>
                 <form action="{{id}}/decide" method="POST">
                     <button type="submit" class="btn btn-default btn-lg">
-                        <span class="glyphicon glyphicon-check"></span> Decide
+                        <span class="glyphicon glyphicon-random"></span> Pick random
                     </button>
                 </form>
             </div>
             <div class="col-xs-6">
                 <div class="panel panel-default">
                     <!-- Default panel contents -->
-                    <div class="panel-heading">Seen by</div>
+                    <div class="panel-heading">Acknowledged by</div>
 
                     <!-- List group -->
                     <ul id="seenBy" class="list-group">
                         {{#seenBy}}
-                        <li class="list-group-item">{{.}}</li>
+                        <li class="list-group-item"><img width="48" height="48" src="{{profileImageURL}}"> {{id}}</li>
                         {{/seenBy}}
                     </ul>
                 </div>
-                  {{/decision}}
-                  <script>
-                </script>
-                <p><a href="/oauth/request?decisionId=${decision.id?html}">
-                        <img src="https://dev.twitter.com/sites/default/files/images_documentation/sign-in-with-twitter-gray.png">
+
+                <p>
+                    <a class="btn btn-default" href="/oauth/request?decisionId={{id}}">
+                        <span class="glyphicon glyphicon-thumbs-up"></span> Acknowledge
                 </a></p>
+                {{/decision}}
                 </div>
 
             </div>
