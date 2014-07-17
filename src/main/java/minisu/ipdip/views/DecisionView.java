@@ -9,7 +9,7 @@ public class DecisionView extends View
 
 	public DecisionView( Decision decision )
 	{
-		super( "decision.ftl" );
+		super( "decision.mustache" );
 		this.decision = decision;
 	}
 

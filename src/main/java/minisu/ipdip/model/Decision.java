@@ -56,10 +56,7 @@ public class Decision
 
 	public Decision wasSeenBy( String user )
 	{
-		if( !decidedAlternative.isPresent() )
-		{
-			seenBy.add( user );
-		}
+        seenBy.add( user );
 		return this;
 	}
 

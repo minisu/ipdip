@@ -59,6 +59,20 @@ public class RandomResource
 				.transform( DecisionView::new );
 	}
 
+    @GET
+    @Produces( MediaType.APPLICATION_JSON )
+    @Path( "{id}/raw" )
+    public Optional<Decision> getDecisionRaw( @Context HttpServletRequest request, @Auth(required = false) User user, @PathParam( "id" )String id )
+    {
+        log.info( "user is " + user);
+
+        String userId = request.getRemoteHost() + " " + request.getHeader( "User-Agent" );
+        System.out.println("us---> " + userId);
+        broadcaster.broadcast( id, Event.newVisitor(userId) ); //TODO: Should only be done if no alternative has been decided
+        return storage.get( id )
+                .transform( d -> d.wasSeenBy( userId ) );
+    }
+
 	@POST
 	@Consumes( MediaType.APPLICATION_JSON )
 	public Response createDecision( Decision decision )
