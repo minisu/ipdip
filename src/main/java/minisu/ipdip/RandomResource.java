@@ -48,22 +48,9 @@ public class RandomResource
 
 	@GET
 	@Path( "{id}" )
-	public Optional<DecisionView> getDecision( @Context HttpServletRequest request, @Auth(required = false) User user, @PathParam( "id" )String id )
+	public Optional<DecisionView> getDecision( @Context HttpServletRequest request, @PathParam( "id" )String id )
 	{
-		log.debug("user is " + user);
-
-        Optional<Decision> decision = storage.get(id);
-        if(!decision.isPresent()) {
-            return Optional.absent();
-        }
-
-        if(!user.isAnonymous()) {
-            decision.get().wasSeenBy(user);
-            broadcaster.broadcast(id,
-                    Event.newVisitor(user)); //TODO: Should only be done if no alternative has been decided
-        }
-
-		return decision.transform( DecisionView::new );
+        return storage.get(id).transform(DecisionView::new);
 	}
 
 	@POST

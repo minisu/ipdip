@@ -84,7 +84,7 @@ public class RandomResourceTest
 		HttpServletRequest request = mock( HttpServletRequest.class );
 		when( request.getRemoteHost() ).thenReturn( DEFAULT_IP );
 		when( request.getHeader( anyString() ) ).thenReturn( userAgent );
-		return resource.getDecision( request, AnonymousUser.create(), decisionLocation.toString() ).get().getDecision();
+		return resource.getDecision( request, decisionLocation.toString() ).get().getDecision();
 	}
 
 	private URI createDecision()

@@ -3,6 +3,10 @@ package minisu.ipdip.auth;
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Optional;
 import minisu.ipdip.IpDipConfig;
+import minisu.ipdip.sse.Broadcaster;
+import minisu.ipdip.sse.Event;
+import minisu.ipdip.storage.DecisionStorage;
+
 import org.brickred.socialauth.AuthProvider;
 import org.brickred.socialauth.Profile;
 import org.brickred.socialauth.SocialAuthConfig;
@@ -38,11 +42,15 @@ public class PublicOAuthResource  {
 	private static final Logger log = LoggerFactory.getLogger( PublicOAuthResource.class );
 
 	private final IpDipConfig appConfig;
+    private final DecisionStorage decisionStorage;
+    private final Broadcaster broadcaster;
 
-	public PublicOAuthResource( IpDipConfig appConfig )
+    public PublicOAuthResource(IpDipConfig appConfig, DecisionStorage decisionStorage, final Broadcaster broadcaster)
 	{
 		this.appConfig = appConfig;
-	}
+        this.decisionStorage = decisionStorage;
+        this.broadcaster = broadcaster;
+    }
 
 	@GET
 	@Timed
@@ -72,7 +80,9 @@ public class PublicOAuthResource  {
 	@Timed
 	@Path("/verify")
 	public Response verifyOAuthServerResponse( @Context HttpServletRequest request,
-															 @QueryParam( "redirect_uri" ) String redirectUri ) throws Exception
+										       @QueryParam( "redirect_uri" ) String redirectUri
+
+    ) throws Exception
 	{
 		// this was placed in the session in the /request resource
 		SocialAuthManager manager = (SocialAuthManager) request.getSession()
@@ -94,20 +104,13 @@ public class PublicOAuthResource  {
 			tempUser.setOpenIDIdentifier( p.getValidatedId() );
 			tempUser.setOAuthInfo(provider.getAccessGrant());
 
-			// Search for a pre-existing User matching the temp User
-			Optional<User> userOptional = UserCache.INSTANCE
-					.getByOpenIDIdentifier( tempUser.getOpenIDIdentifier() );
-			if (!userOptional.isPresent()) {
-				// Persist the user with the generated session token
-				UserCache.INSTANCE.put(tempUser.getSessionToken(),
-						tempUser);
-			} else {
-				tempUser = userOptional.get();
-			}
+            log.info( "??? " + redirectUri.substring(redirectUri.length() - 36) );
+            String decisionId = redirectUri.substring(redirectUri.length() - 36);
+            decisionStorage.get(decisionId).get().wasSeenBy(tempUser);
+            broadcaster.broadcast(decisionId, Event.newVisitor(tempUser));
 
 			return Response
 					.temporaryRedirect( new URI( URLDecoder.decode( redirectUri, "UTF-8" ) ) )
-					.cookie( replaceSessionTokenCookie( Optional.of( tempUser ) ) )
 					.build();
 		}
 
@@ -127,41 +130,4 @@ public class PublicOAuthResource  {
 		manager.setSocialAuthConfig(config);
 		return manager;
 	}
-
-	/**
-	 * @param user A user with a session token. If absent then the cookie will be removed.
-	 *
-	 * @return A cookie with a long term expiry date suitable for use as a session token for OpenID
-	 */
-	protected NewCookie replaceSessionTokenCookie(Optional<User> user) {
-
-		if (user.isPresent()) {
-
-			String value = user.get().getSessionToken().toString();
-
-			log.info("Replacing session token with {}", value);
-
-			return new NewCookie(
-					"IpDip-session",
-					value,   // Value
-					"/",     // Path
-					null,    // Domain
-					null,    // Comment
-					86400 * 30, // 30 days
-					false);
-		} else {
-			// Remove the session token cookie
-			log.debug("Removing session token");
-
-			return new NewCookie(
-					"IpDip-session",
-					null,   // Value
-					null,    // Path
-					null,   // Domain
-					null,   // Comment
-					0,      // Expire immediately
-					false);
-		}
-	}
-
 }
