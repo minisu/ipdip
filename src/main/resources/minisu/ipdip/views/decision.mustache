@@ -12,6 +12,11 @@
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 		<script type="text/javascript">
+            function highlightDecision(decidedAlternative) {
+                decidedAlternative.addClass("list-group-item-success");
+                decidedAlternative.prepend("<span class='glyphicon glyphicon-ok'></span> ");
+                $('.btn-default').prop('disabled', true);
+            }
             {{#decision}}
             var source = new EventSource("/subscribe?channel={{id}}");
             {{/decision}}
@@ -19,13 +24,17 @@
                 document.getElementById("seenBy").innerHTML += "<li class='list-group-item'>" + event.data + '</li>'
             });
             source.addEventListener("decisionMade", function(event) {
-                document.getElementById("seenBy").innerHTML += "<li class='list-group-item'>Decision made: " + event.data + '</li>'
+                var decidedAlternative = $('li').filter(function() {
+                    return $(this).text() === event.data;
+                });
+                highlightDecision(decidedAlternative);
             });
             {{#decidedAlternative}}
             $(function() {
-                $('li:contains("{{.}}")').addClass("list-group-item-success");
-                $('li:contains("{{.}}")').prepend("<span class='glyphicon glyphicon-ok'></span> ");
-                $('.btn-default').prop('disabled', true);
+                var decidedAlternative = $('li').filter(function() {
+                    return $(this).text() === '{{.}}';
+                });
+                highlightDecision(decidedAlternative);
             });
             {{/decidedAlternative}}
 		</script>
