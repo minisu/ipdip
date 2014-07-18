@@ -66,7 +66,7 @@ public class PublicOAuthResource  {
 
 		URI url = new URI( manager.getAuthenticationUrl(
 				"twitter", appConfig.getOAuthSuccessUrl() + "?redirect_uri=" + redirectUri ) );
-		log.debug("OAuth Auth URL: {}", url);
+		log.info("OAuth Auth URL: {}", url);
 		return Response.temporaryRedirect( url ).build();
 	}
 

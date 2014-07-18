@@ -7,7 +7,7 @@ server:
   adminContextPath: /admin
   connector:
     type: http
-    port: 9010
+    port: 80
 
 # Define OAuth settings
 oauthSuccessUrl: http://ipdip.herokuapp.com/oauth/verify

@@ -87,7 +87,8 @@
                 </div>
 
                 <p>
-                    <form action="/oauth/request?decisionId={{id}}" method="GET">
+                    <form action="/oauth/request" method="GET">
+                    <input name="decisionId" value="{{id}}" hidden="true">
                     <button class="btn btn-default btn-lg">
                         <span class="glyphicon glyphicon-thumbs-up"></span> Acknowledge
                     </button>
