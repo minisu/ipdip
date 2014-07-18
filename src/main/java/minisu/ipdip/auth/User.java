@@ -53,26 +53,21 @@ public class User {
     @JsonProperty
     private final String profileImageURL;
 
-    @JsonProperty
     private boolean anonymous;
 
 	@JsonCreator
 	public User(@JsonProperty("id") String id,
-                @JsonProperty("profileImageURL") String profileImageURL,
-					@JsonProperty("sessionToken") UUID sessionToken) {
+                @JsonProperty("profileImageURL") String profileImageURL) {
 
 		this.id = id;
-		this.sessionToken = sessionToken;
         this.profileImageURL = profileImageURL;
 	}
 
-    public User(@JsonProperty("id") String id,
-                @JsonProperty("profileImageURL") String profileImageURL,
-                @JsonProperty("sessionToken") UUID sessionToken,
+    public User(String id,
+                String profileImageURL,
                 boolean anonymous) {
 
         this.id = id;
-        this.sessionToken = sessionToken;
         this.profileImageURL = profileImageURL;
         this.anonymous = anonymous;
     }
@@ -102,17 +97,6 @@ public class User {
 
 	public void setOpenIDIdentifier(String openIDIdentifier) {
 		this.openIDIdentifier = openIDIdentifier;
-	}
-
-	/**
-	 * @return The session key
-	 */
-	public UUID getSessionToken() {
-		return sessionToken;
-	}
-
-	public void setSessionToken(UUID sessionToken) {
-		this.sessionToken = sessionToken;
 	}
 
 	public void setOAuthInfo(AccessGrant oathJSON) throws IOException

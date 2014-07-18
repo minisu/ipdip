@@ -19,6 +19,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
@@ -48,22 +50,19 @@ public class RandomResource
 
 	@GET
 	@Path( "{id}" )
-	public Optional<DecisionView> getDecision( @Context HttpServletRequest request, @PathParam( "id" )String id )
-	{
+	public Optional<DecisionView> getDecision( @Context HttpServletRequest request, @PathParam( "id" )String id ) throws IOException {
         return storage.get(id).transform(DecisionView::new);
 	}
 
 	@POST
 	@Consumes( MediaType.APPLICATION_JSON )
-	public Response createDecision( Decision decision )
-	{
+	public Response createDecision( Decision decision ) throws IOException {
 		storage.store( decision );
 		return Response.created( URI.create( decision.getId() ) ).entity( decision ).build();
 	}
 
 	@POST
-	public Response createDecisionFromForm( MultivaluedMap<String, String> formParams )
-	{
+	public Response createDecisionFromForm( MultivaluedMap<String, String> formParams ) throws IOException {
 		String name = formParams.getFirst( "name" );
 		List<String> alternatives = formParams.get( "alternative" );
 
@@ -77,8 +76,7 @@ public class RandomResource
 
 	@POST
 	@Path( "{id}/decide" )
-	public Response decide( @PathParam( "id" )String id )
-	{
+	public Response decide( @PathParam( "id" )String id ) throws IOException {
 		Decision decision = storage.get( id ).get();
 		decision.decide();
         broadcaster.broadcast( id, Event.decisionMade(decision.getDecidedAlternative().get()) );

@@ -9,6 +9,8 @@ import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
+
+import java.io.IOException;
 import java.net.URI;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -30,16 +32,14 @@ public class RandomResourceTest
 	}
 
 	@Test
-	public void createAndFetch()
-	{
+	public void createAndFetch() throws IOException {
 		URI decisionLocation = createDecision();
 
 		assertThat( getDecision( decisionLocation ) ).isEqualTo( inputDecision );
 	}
 
 	@Test
-	public void createDecideAndFetch()
-	{
+	public void createDecideAndFetch() throws IOException {
 		URI decisionLocation = createDecision();
 
 		assertThat( !getDecision( decisionLocation ).getDecidedAlternative().isPresent() );
@@ -51,8 +51,7 @@ public class RandomResourceTest
 	}
 
 	@Test
-	public void shouldPersistVisitors()
-	{
+	public void shouldPersistVisitors() throws IOException {
 		URI decisionLocation = createDecision();
 
 		getDecisionAs( decisionLocation, "Chrome" );
@@ -62,8 +61,7 @@ public class RandomResourceTest
 	}
 
 	@Test
-	public void shouldNotPersistVisitorsAfterDecided()
-	{
+	public void shouldNotPersistVisitorsAfterDecided() throws IOException {
 		URI decisionLocation = createDecision();
 
 		resource.decide( decisionLocation.toString() );
@@ -74,21 +72,18 @@ public class RandomResourceTest
 		assertThat( decision.getSeenBy() ).isEmpty();
 	}
 
-	private Decision getDecision( URI decisionLocation )
-	{
+	private Decision getDecision( URI decisionLocation ) throws IOException {
 		return getDecisionAs( decisionLocation, "Lynx" );
 	}
 
-	private Decision getDecisionAs( URI decisionLocation, String userAgent )
-	{
+	private Decision getDecisionAs( URI decisionLocation, String userAgent ) throws IOException {
 		HttpServletRequest request = mock( HttpServletRequest.class );
 		when( request.getRemoteHost() ).thenReturn( DEFAULT_IP );
 		when( request.getHeader( anyString() ) ).thenReturn( userAgent );
 		return resource.getDecision( request, decisionLocation.toString() ).get().getDecision();
 	}
 
-	private URI createDecision()
-	{
+	private URI createDecision() throws IOException {
 		Response response = resource.createDecision( inputDecision );
 		return ( URI )response.getMetadata().getFirst( "Location" );
 	}
