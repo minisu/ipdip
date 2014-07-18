@@ -15,9 +15,19 @@
             function highlightDecision(decidedAlternative) {
                 decidedAlternative.addClass("list-group-item-success");
                 decidedAlternative.prepend("<span class='glyphicon glyphicon-ok'></span> ");
-                $('.btn-default').prop('disabled', true);
+                $('button').prop('disabled', true);
             }
             {{#decision}}
+            $(function() {
+                $('#pick').click(function() {
+
+                    $.ajax({
+                        url: '{{id}}/decide',
+                        type: 'POST'
+                    });
+
+                });
+            });
             var source = new EventSource("/subscribe?channel={{id}}");
             {{/decision}}
             source.addEventListener("newVisitor", function(event) {
@@ -59,11 +69,9 @@
                             {{/alternatives}}
                         </ul>
                     </div>
-                <form action="{{id}}/decide" method="POST">
-                    <button type="submit" class="btn btn-default btn-lg">
+                    <button type="submit" id="pick" class="btn btn-default btn-lg">
                         <span class="glyphicon glyphicon-random"></span> Pick random
                     </button>
-                </form>
             </div>
             <div class="col-xs-6">
                 <div class="panel panel-default">
@@ -79,9 +87,12 @@
                 </div>
 
                 <p>
-                    <a class="btn btn-default" href="/oauth/request?decisionId={{id}}">
+                    <form action="/oauth/request?decisionId={{id}}" method="GET">
+                    <button class="btn btn-default btn-lg">
                         <span class="glyphicon glyphicon-thumbs-up"></span> Acknowledge
-                </a></p>
+                    </button>
+                    </form>
+                </p>
                 {{/decision}}
                 </div>
 
