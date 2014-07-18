@@ -10,7 +10,7 @@ server:
     port: 9010
 
 # Define OAuth settings
-oauthSuccessUrl: http://agile-scrubland-4645.herokuapp.com/oauth/verify
+oauthSuccessUrl: http://ipdip.herokuapp.com/oauth/verify
 
 oauth:
     prefix: twitter.com

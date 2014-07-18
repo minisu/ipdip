@@ -24,7 +24,7 @@ import java.util.List;
 
 import static javax.ws.rs.core.MediaType.TEXT_HTML;
 
-@Path( "decisions/" )
+@Path( "/" )
 @Produces( TEXT_HTML)
 @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
 public class RandomResource
@@ -70,7 +70,7 @@ public class RandomResource
 		Decision decision = new Decision( name, alternatives );
 		storage.store( decision );
 		return Response
-				.seeOther( URI.create( "decisions/" + decision.getId() ) )
+				.seeOther( URI.create( decision.getId() ) )
 				.entity( new DecisionView( decision ) )
 				.build();
 	}
