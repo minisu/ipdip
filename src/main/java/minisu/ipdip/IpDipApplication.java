@@ -27,6 +27,7 @@ public class IpDipApplication extends Application<IpDipConfig>
 	{
 		BroadcastingCentral broadcastingCentral = new BroadcastingCentral();
         DecisionStorage storage = new RedisStorage(config.jedisPool());
+        //DecisionStorage storage = new InMemoryStorage();
         environment.jersey().register( new RandomResource(storage, broadcastingCentral ) );
 
         environment.getApplicationContext().addServlet(

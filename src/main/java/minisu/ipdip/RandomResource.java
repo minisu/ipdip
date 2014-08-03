@@ -49,19 +49,21 @@ public class RandomResource
 	}
 
 	@GET
-	@Path( "{id}" )
+	@Path( "decisions/{id}" )
 	public Optional<DecisionView> getDecision( @Context HttpServletRequest request, @PathParam( "id" )String id ) throws IOException {
         return storage.get(id).transform(DecisionView::new);
 	}
 
 	@POST
+    @Path( "decisions" )
 	@Consumes( MediaType.APPLICATION_JSON )
 	public Response createDecision( Decision decision ) throws IOException {
 		storage.store( decision );
-		return Response.created( URI.create( decision.getId() ) ).entity( decision ).build();
+		return Response.created( URI.create( "decisions/" + decision.getId() ) ).entity( decision ).build();
 	}
 
 	@POST
+    @Path( "decisions" )
 	public Response createDecisionFromForm( MultivaluedMap<String, String> formParams ) throws IOException {
 		String name = formParams.getFirst( "name" );
 		List<String> alternatives = formParams.get( "alternative" );
@@ -69,13 +71,13 @@ public class RandomResource
 		Decision decision = new Decision( name, alternatives );
 		storage.store( decision );
 		return Response
-				.seeOther( URI.create( decision.getId() ) )
+				.seeOther( URI.create( "decisions/" + decision.getId() ) )
 				.entity( new DecisionView( decision ) )
 				.build();
 	}
 
 	@POST
-	@Path( "{id}/decide" )
+	@Path( "decisions/{id}/decide" )
 	public Response decide( @PathParam( "id" )String id ) throws IOException {
 		Decision decision = storage.get( id ).get();
 		decision.decide();
