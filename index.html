@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ipdip – Fair distributed decision maker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <style>
+        html {
+            position: relative;
+            min-height: 100%;
+        }
+        body {
+            margin-bottom: 60px; /* Margin bottom by footer height */
+        }
+        .footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 60px; /* Set the fixed height of the footer here */
+            line-height: 60px; /* Vertically center the text there */
+            background-color: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+<main role="main" class="container">
+    <div class="mb-3">
+        <h1>Ipdip</h1>
+        <p>
+            Ipdip lets a group make random decisions remotely.
+            Create a decision and share the link to the rest of the group. Once everyone has seen the (undecided) decision, click <em>Decide randomly</em>.
+        </p>
+        <h2>Create a new decision</h2>
+        <form action="/decision" method="post">
+            <label for="name" class="form-label">
+                What should be decided?
+            </label>
+            <input type="text" name="name" id="name" class="form-control" placeholder="What should we have for dinner?">
+            <br>
+            <label for="options" class="form-label">
+                What are the options?
+            </label>
+            <textarea name="options" id="options" rows="4" style="height:100%;" class="form-control"
+                      aria-describedby="optionsHelp" placeholder="Pizza
+Sushi
+Wok"></textarea>
+            <br>
+            <button type="submit" class="btn btn-primary">Create decision</button>
+        </form>
+    </div>
+</main>
+<footer class="footer">
+    <div class="container">
+        <span class="text-muted">Ipdip is written in Go, stores its data in Datastore and deployed as a Google Cloud Function.</span>
+    </div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+</body>
+</html>
