@@ -1,13 +1,13 @@
 package main
 
 import (
-	"github.com/rahmanfadhil/gin-bookstore/repository/inmemory"
+	"github.com/minisu/ipdip/repository/inmemory"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func Test_decisionMaker_create_and_get(t *testing.T) {
-	m := decisionMaker { repository: inmemory.NewInMemoryDecisionRepo() }
+	m := DecisionMaker{ repository: inmemory.NewInMemoryDecisionRepo() }
 	name := "Which flavor?"
 	options := []string{"Vanilla", "Chocolate"}
 	id, err := m.createDecision(name, options)
@@ -25,7 +25,7 @@ func Test_decisionMaker_create_and_get(t *testing.T) {
 }
 
 func Test_decisionMaker_decide(t *testing.T) {
-	m := decisionMaker { repository: inmemory.NewInMemoryDecisionRepo() }
+	m := DecisionMaker{ repository: inmemory.NewInMemoryDecisionRepo() }
 	name := "Which flavor?"
 	options := []string{"Vanilla", "Chocolate"}
 	id, err := m.createDecision(name, options)

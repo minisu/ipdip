@@ -31,22 +31,22 @@
     <h4>Options</h4>
     <ul>
         {{ range .Options }}
-            {{ if eq $.DecidedOption "" }}{{ else }}
-                {{ if eq $.DecidedOption . }}{{ else }}<s><span class="text-muted">
-                {{ end }}
+            {{ if and (ne $.DecidedOption "") (ne $.DecidedOption .) }}
+                <s><span class="text-muted">
             {{ end }}
-            <li>
-            {{ . }}
-                </li>
-            {{ if eq $.DecidedOption "" }}{{ else }}
-                {{ if eq $.DecidedOption . }}{{ else }}</span></s>
-                {{ end }}
+            <li>{{ . }}</li>
+            {{ if and (ne $.DecidedOption "") (ne $.DecidedOption .) }}
+                </span></s>
             {{ end }}
         {{ end }}
     </ul>
 
+    {{ if ne $.DecidedOption "" }}
+    <p>Decision made at {{$.DecidedAt}}</p>
+    {{ end }}
+
     <form action="/decision/{{.Id}}/decide" method="post">
-        <button type="submit" class="btn btn-primary" {{ if eq .DecidedOption "" }}{{ else }}disabled="true"{{ end }}>Decide randomly</button>
+        <button type="submit" class="btn btn-primary" {{ if ne .DecidedOption "" }}disabled{{ end }}>Decide randomly</button>
     </form>
     </div>
 </main>

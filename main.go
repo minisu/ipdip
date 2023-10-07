@@ -4,7 +4,7 @@ import (
 	"cloud.google.com/go/datastore"
 	"context"
 	"github.com/gin-gonic/gin"
-	"github.com/minisu/ipdip/repository/firestore_repo"
+	"github.com/minisu/ipdip/repository/inmemory"
 	"github.com/satori/go.uuid"
 	"log"
 	"net/http"
@@ -22,8 +22,8 @@ func main() {
 	}
 	defer dsClient.Close()
 
-	repository := firestore_repo.NewFirestoreDecisionRepo(dsClient, ctx)
-	//repository := inmemory.NewInMemoryDecisionRepo()
+	//repository := firestore_repo.NewFirestoreDecisionRepo(dsClient, ctx)
+	repository := inmemory.NewInMemoryDecisionRepo()
 	decisionMaker := NewDecisionMaker(repository)
 
 	r := gin.Default()
@@ -43,7 +43,7 @@ func main() {
 			return
 		}
 
-		c.HTML(http.StatusOK, "decision.tmpl", d)
+		c.HTML(http.StatusOK, "decision.gohtml", d)
 	})
 	r.POST("/decision/:id/decide", func(c *gin.Context) {
 		decisionId, err := uuid.FromString(c.Param("id"))

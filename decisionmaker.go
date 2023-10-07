@@ -3,25 +3,26 @@ package main
 import (
 	"fmt"
 	"github.com/minisu/ipdip/api"
-	uuid "github.com/satori/go.uuid"
+	"github.com/satori/go.uuid"
 	"math/rand"
+	"time"
 )
 
-type decisionMaker struct {
+type DecisionMaker struct {
 	repository api.DecisionRepository
 }
 
-func NewDecisionMaker(repository api.DecisionRepository) *decisionMaker {
-	return &decisionMaker{repository: repository}
+func NewDecisionMaker(repository api.DecisionRepository) *DecisionMaker {
+	return &DecisionMaker{repository: repository}
 }
 
-func (m *decisionMaker) createDecision(name string, options []string) (id uuid.UUID, err error) {
+func (m *DecisionMaker) createDecision(name string, options []string) (id uuid.UUID, err error) {
 	id = uuid.NewV4()
 	err = m.repository.Put(api.Decision{Id: id.String(), Name: name, Options: options})
 	return
 }
 
-func (m *decisionMaker) decide(id uuid.UUID) (d api.Decision, err error) {
+func (m *DecisionMaker) decide(id uuid.UUID) (d api.Decision, err error) {
 	d, err = m.repository.Get(id)
 
 	if err != nil {
@@ -29,17 +30,18 @@ func (m *decisionMaker) decide(id uuid.UUID) (d api.Decision, err error) {
 	}
 
 	if d.DecidedOption != "" {
-		return d, fmt.Errorf("Decision already made")
+		return d, fmt.Errorf("decision already made")
 	}
 
 	decidedOption := pickRandom(d.Options)
 	d.DecidedOption = decidedOption
+	d.DecidedAt = time.Now()
 	err = m.repository.Put(d)
 
 	return
 }
 
-func (m *decisionMaker) getDecision(id uuid.UUID) (d api.Decision, err error) {
+func (m *DecisionMaker) getDecision(id uuid.UUID) (d api.Decision, err error) {
 	return m.repository.Get(id)
 }
 
