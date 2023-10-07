@@ -35,7 +35,7 @@ func (m *DecisionMaker) decide(id uuid.UUID) (d api.Decision, err error) {
 
 	decidedOption := pickRandom(d.Options)
 	d.DecidedOption = decidedOption
-	d.DecidedAt = time.Now()
+	d.DecidedAt = time.Now().UTC()
 	err = m.repository.Put(d)
 
 	return

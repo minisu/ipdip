@@ -42,7 +42,10 @@
     </ul>
 
     {{ if ne $.DecidedOption "" }}
-    <p>Decision made at {{$.DecidedAt}}</p>
+    <p>Decision made at <span id="decision-time"></span></p>
+    <script>
+        document.getElementById("decision-time").innerHTML = Date("{{$.DecidedAt}}").toString()
+    </script>
     {{ end }}
 
     <form action="/decision/{{.Id}}/decide" method="post">
