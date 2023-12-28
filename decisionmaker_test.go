@@ -18,7 +18,7 @@ func Test_decisionMaker_create_and_get(t *testing.T) {
 
 	d, err := m.getDecision(id)
 
-	assert.Equal(t, id, d.Id)
+	assert.Equal(t, id.String(), d.Id)
 	assert.Equal(t, name, d.Name)
 	assert.Equal(t, "", d.DecidedOption)
 	assert.Equal(t, options, d.Options)
