@@ -3,9 +3,9 @@ package main
 import (
 	"cloud.google.com/go/datastore"
 	"context"
-	"github.com/gin-gonic/gin"
-	"github.com/minisu/ipdip/repository/firestore"
+	"github.com/minisu/ipdip/repository/inmemory"
 	"github.com/satori/go.uuid"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -16,59 +16,69 @@ func main() {
 	ctx := context.Background()
 	dsClient, err := datastore.NewClient(ctx, "ipdip-334118")
 
+	decisionTmpl := template.Must(template.ParseFiles("templates/decision.gohtml"))
+
 	if err != nil {
 		log.Fatalln(err)
 		return
 	}
 	defer dsClient.Close()
 
-	repository := firestore.NewFirestoreDecisionRepo(dsClient, ctx)
-	//repository := inmemory.NewInMemoryDecisionRepo()
+	//repository := firestore.NewFirestoreDecisionRepo(dsClient, ctx)
+	repository := inmemory.NewInMemoryDecisionRepo()
 	decisionMaker := NewDecisionMaker(repository)
 
-	r := gin.Default()
-	r.LoadHTMLGlob("templates/*")
-	r.StaticFile("/", "./index.html")
+	http.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "index.html")
+	})
 
-	r.GET("/decision/:id", func(c *gin.Context) {
-		decisionId, err := uuid.FromString(c.Param("id"))
+	http.HandleFunc("GET /decision/{id}", func(w http.ResponseWriter, r *http.Request) {
+		decisionId, err := uuid.FromString(r.PathValue("id"))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			http.Error(w, err.Error(), http.StatusNotFound)
 			return
 		}
 
 		d, err := decisionMaker.getDecision(decisionId)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		c.HTML(http.StatusOK, "decision.gohtml", d)
+		decisionTmpl.Execute(w, d)
 	})
-	r.POST("/decision/:id/decide", func(c *gin.Context) {
-		decisionId, err := uuid.FromString(c.Param("id"))
+
+	http.HandleFunc("POST /decision/{id}/decide", func(w http.ResponseWriter, r *http.Request) {
+		decisionId, err := uuid.FromString(r.PathValue("id"))
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
 		_, err = decisionMaker.decide(decisionId)
 		if err != nil {
-			c.String(400, err.Error())
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 
-		c.Redirect(302, "/decision/"+decisionId.String())
+		http.Redirect(w, r, "/decision/"+decisionId.String(), http.StatusFound)
 	})
-	r.POST("/decision", func(c *gin.Context) {
-		name := c.PostForm("name")
-		options := strings.Split(c.PostForm("options"), "\n")
+
+	http.HandleFunc("POST /decision", func(w http.ResponseWriter, r *http.Request) {
+		if err := r.ParseForm(); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		name := r.PostForm["name"][0]
+		options := strings.Split(r.PostForm["options"][0], "\n")
 
 		id, err := decisionMaker.createDecision(name, options)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
-		c.Redirect(302, "/decision/"+id.String())
+		http.Redirect(w, r, "/decision/"+id.String(), http.StatusFound)
 	})
 
 	// Determine port for HTTP service.
@@ -78,5 +88,8 @@ func main() {
 		log.Printf("defaulting to port %s", port)
 	}
 
-	r.Run(":" + port) // serve on localhost:8080
+	log.Printf("Listening on :%s...", port)
+	if err := http.ListenAndServe(":"+port, http.DefaultServeMux); err != nil {
+		log.Fatal(err)
+	}
 }
