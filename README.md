@@ -4,7 +4,7 @@ Lets a group make random decisions remotely. Create a decision and share the lin
 
 Ipdip is written in Go, stores its data in Datastore and deployed in Google Cloud Run.
 
-https://ipdip-tue5z4re6q-ey.a.run.app/
+https://ipdip-tue5z4re6q-lz.a.run.app
 
 ## Run
 ```
